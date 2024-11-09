@@ -1,51 +1,51 @@
 // src/utils/stringCalculator.ts
 
-function escapeRegExp(string: string): string {
-  // Escaping all special regex characters
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+import { parseDelimiters } from './delimiterParser';
+
+export function escapeRegExp(input: string): string {
+  return input.replace(/[-^$*+?.()|[\]{}]/g, '\\$&');
+
 }
-export function add(numbers: string): number {
 
-  let delimiters: string[] = [',', '\n'];
-  let numsString = numbers;
+// stringCalculator.ts
+
+function splitNumbers(numbers: string, delimiterPattern: RegExp): number[] {
+  console.log(`Splitting using pattern: ${delimiterPattern}`);
+  const result = numbers.split(delimiterPattern);
+  console.log(`Split result: ${result}`);
+  return result.map((num) => parseInt(num)).filter((num) => !isNaN(num));
+}
 
 
-  const customDelimiterRegex = /^\/\/(.*?)\n(.*)/s;
+export function add(input: string): number {
+  if (input.trim() === '') {
+    return 0;
+  }
 
-  numbers.replace(customDelimiterRegex, (_, delimiterSection, rest) => {
-    numsString = rest;
+  const { numbersString, delimiterPattern } = parseDelimiters(input);
 
-    const multipleDelimitersRegex = /\[([^\]]+)\]/g;
-    let delimiterMatch;
-    const customDelimiters = [];
+console.log(`Using delimiter pattern: ${delimiterPattern}`);
 
-    while ((delimiterMatch = multipleDelimitersRegex.exec(delimiterSection)) !== null) {
-      customDelimiters.push(escapeRegExp(delimiterMatch[1]));
-    }
-
-    if (customDelimiters.length > 0) {
-      delimiters = customDelimiters;
-    } else {
-      delimiters = [escapeRegExp(delimiterSection)];
-    }
-
-    return '';
-  });
-
-  // Creating a delimiter pattern
-  const delimiterPattern = new RegExp(delimiters.join('|'));
-
-  // Spliting the numbers string using the delimiter pattern
-  const nums = numsString.split(delimiterPattern).map((num) => parseInt(num));
+  const parsedNumbers = splitNumbers(numbersString, delimiterPattern);
+  console.log(`Parsed numbers: ${parsedNumbers}`);
 
   // Checking for negative numbers
-  const negativeNumbers = nums.filter((num) => num < 0);
+  const negativeNumbers = parsedNumbers.filter((num) => num < 0);
   if (negativeNumbers.length > 0) {
-    throw new Error(`negative numbers not allowed: ${negativeNumbers.join(',')}`);
+    throw new Error(`Negative numbers not allowed: ${negativeNumbers.join(', ')}`);
   }
 
   // Ignoring numbers greater than 1000
-  const filteredNums = nums.filter((num) => num <= 1000);
+  const filteredNumbers = parsedNumbers.filter((num) => num <= 1000);
+    console.log(`Filtered numbers (<= 1000): ${filteredNumbers}`);
 
-  return filteredNums.reduce((sum, num) => sum + num, 0);
+
+
+  const result = filteredNumbers.reduce((sum, num) => sum + num, 0);
+
+   console.log(`Sum of numbers: ${result}`);
+  return result;
+
+
+
 }
