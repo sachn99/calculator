@@ -1,4 +1,4 @@
-// src/stringCalculator.ts
+// src/utils/stringCalculator.ts
 
 function escapeRegExp(string: string): string {
   // Escaping all special regex characters
