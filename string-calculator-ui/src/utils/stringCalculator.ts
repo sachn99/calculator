@@ -7,7 +7,6 @@ export function escapeRegExp(input: string): string {
 
 }
 
-// stringCalculator.ts
 
 function splitNumbers(numbers: string, delimiterPattern: RegExp): number[] {
   console.log(`Splitting using pattern: ${delimiterPattern}`);
@@ -18,34 +17,18 @@ function splitNumbers(numbers: string, delimiterPattern: RegExp): number[] {
 
 
 export function add(input: string): number {
-  if (input.trim() === '') {
+  input = input.trim().replace(/\r\n|\r/g, '\n');
+
+  if (input === '') {
     return 0;
   }
 
   const { numbersString, delimiterPattern } = parseDelimiters(input);
-
-console.log(`Using delimiter pattern: ${delimiterPattern}`);
+  console.log(`Using delimiter pattern: ${delimiterPattern}`);
 
   const parsedNumbers = splitNumbers(numbersString, delimiterPattern);
   console.log(`Parsed numbers: ${parsedNumbers}`);
 
-  // Checking for negative numbers
-  const negativeNumbers = parsedNumbers.filter((num) => num < 0);
-  if (negativeNumbers.length > 0) {
-    throw new Error(`Negative numbers not allowed: ${negativeNumbers.join(', ')}`);
-  }
-
-  // Ignoring numbers greater than 1000
   const filteredNumbers = parsedNumbers.filter((num) => num <= 1000);
-    console.log(`Filtered numbers (<= 1000): ${filteredNumbers}`);
-
-
-
-  const result = filteredNumbers.reduce((sum, num) => sum + num, 0);
-
-   console.log(`Sum of numbers: ${result}`);
-  return result;
-
-
-
+  return filteredNumbers.reduce((sum, num) => sum + num, 0);
 }
